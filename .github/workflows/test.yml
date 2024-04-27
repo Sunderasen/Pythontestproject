@@ -31,7 +31,7 @@ jobs:
           export SENTRY_AUTH_TOKEN="30b633f19e57f3a4a531ad5ab530eeb8d7affc10aa444711d5ea5a68ab41195f" # From internal integration: py_crash_free
           export SENTRY_ORG="tssdev"
           export SENTRY_PROJECT="crashfreesession_test"
-          VERSION=$(sentry-cli releases propose-version)
+          VERSION=`sentry-cli releases propose-version`
           
           # Workflow to create releases
           sentry-cli releases new "$VERSION"
