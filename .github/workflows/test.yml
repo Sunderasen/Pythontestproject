@@ -28,10 +28,10 @@ jobs:
           curl -sL https://sentry.io/get-cli/ | bash
           
           # Setup configuration values
-          export SENTRY_AUTH_TOKEN="f6d4dff42c2d4684845fee35c79007d9a5b7efa67488104f7a52d7e9700f45d6"
-          export SENTRY_ORG="tssdev"
-          export SENTRY_PROJECT="node-lms-staging"
-          VERSION=$(sentry-cli releases propose-version)
+         SENTRY_AUTH_TOKEN=1fb19220a7474f248b4f58452450c5422562be4ae06a2e16c46d7df45c52bda9 # From internal integration: Crash_free_session_integ
+	 SENTRY_ORG=tssdev
+	 SENTRY_PROJECT=crashfreesession_test
+	 VERSION=`sentry-cli releases propose-version`
           
           # Workflow to create releases
           sentry-cli releases new "$VERSION"
