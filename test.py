@@ -1,18 +1,37 @@
-import colorama
-# Back for background, Fore for text color
-from colorama import Back, Fore
+from PyPDF2 import PdfFileWriter, PdfFileReader
+import getpass
+import sentry_sdk
 
-# This line is make sure that the color style resets once the execution of program is complete
-colorama.init(autoreset = True)
+# Initialize Sentry SDK with your DSN
+sentry_sdk.init(
+    dsn="http://e5d405fe4fbdc231e9c5ebaec52c203c@sentry.treeone.one:9000/23",
+    traces_sample_rate=1.0,  # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+)
 
-text = input("Enter a pharse or sentence: ")
+try:
+    # Making an instance of the PdfFileWriter class and storing it in a variable
+    writer = PdfFileWriter()
 
-# Colorama has limited color options
-print(Fore.BLACK + Back.WHITE  + text)
-print(Fore.RED + Back.CYAN  + text)
-print(Fore.GREEN + Back.MAGENTA  + text)
-print(Fore.YELLOW + Back.BLUE  + text)
-print(Fore.BLUE + Back.YELLOW  + text)
-print(Fore.MAGENTA + Back.GREEN  + text)
-print(Fore.CYAN + Back.RED  + text)
-print(Fore.WHITE + Back.BLACK  + text)
+    # Explicitly ask the user for the name of the original file
+    pdf_name = input('Please type in the name of the PDF file suffixed with its extension: ')
+
+    # Making an instance of the PdfFileReader class with the original file as an argument
+    original_file = PdfFileReader(pdf_name)
+
+    # Copies the content of the original file to the writer variable
+    for page in range(original_file.numPages):
+        writer.addPage(original_file.getPage(page))
+
+    # Retrieve a preferred password from the user
+    password = getpass.getpass(prompt="Set a Password: ")
+
+    # Encrypt the copy of the original file
+    writer.encrypt(password)
+
+    # Opens a new PDF (write binary permission) and writes the content of the 'writer' into it
+    with open('secured.pdf', 'wb') as f:
+        writer.write(f)
+
+except Exception as e:
+    # Capture and report exceptions to Sentry
+    sentry_sdk.capture_exception(e)
