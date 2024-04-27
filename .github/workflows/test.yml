@@ -28,7 +28,7 @@ jobs:
           curl -sL https://sentry.io/get-cli/ | bash
           
           # Setup configuration values
-          export SENTRY_AUTH_TOKEN="8761892a92d955b37e48329f5697c37f9c41954d301aedabd27d9e2531b5d6b3" # From internal integration: py_crash_free
+          export SENTRY_AUTH_TOKEN="30b633f19e57f3a4a531ad5ab530eeb8d7affc10aa444711d5ea5a68ab41195f" # From internal integration: py_crash_free
           export SENTRY_ORG="tssdev"
           export SENTRY_PROJECT="crashfreesession_test"
           VERSION=$(sentry-cli releases propose-version)
