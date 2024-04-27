@@ -1,0 +1,39 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  production:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Production
+        run: |
+          rsync -azv --delete --exclude='.git' -e "ssh -p 22 -o StrictHostKeyChecking=no" $GITHUB_WORKSPACE/ ubuntu@13.233.164.224:/home/ubuntu/pytest
+
+      - name: Sentry Integration - Crash free session
+        run: |
+          # Install the CLI
+          curl -sL https://sentry.io/get-cli/ | bash
+          
+          # Setup configuration values
+          export SENTRY_AUTH_TOKEN="<click-here-for-your-token>"
+          export SENTRY_ORG="tssdev"
+          export SENTRY_PROJECT="node-lms-staging"
+          VERSION=$(sentry-cli releases propose-version)
+          
+          # Workflow to create releases
+          sentry-cli releases new "$VERSION"
+          sentry-cli releases set-commits "$VERSION" --auto
+          sentry-cli releases finalize "$VERSION"
